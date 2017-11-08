@@ -17,7 +17,7 @@
       <div class="row">
         <div class="col-md-4"><strong><span class="glyphicon glyphicon-calendar"></span>  QUINCENA 1</strong></div>
         <div class="col-md-4"><strong>TOTAL:</strong> <span class="label label-danger pull-right" style="font-size:14px;">¢500.000</span></div>
-        <div class="col-md-4"><strong>SALDO:</strong> <span class="label label-success pull-right" style="font-size:14px;">¢500.000</span></div>
+        <div class="col-md-4"><strong>SALDO:</strong> <span class="label label-success pull-right" style="font-size:14px;">¢ {{ totalBalance.first }}</span></div>
       </div>
       <hr>
       
@@ -27,16 +27,16 @@
             
             <div class="form-group row" style="margin-bottom:5px !important;">
               <div class="col-xs-8">
-                <input class="form-control" id="ex1" type="text" placeholder="Agregue Compra">
+                <input class="form-control" id="article" v-model="article" type="text" placeholder="Agregue Compra">
               </div>
               <div class="col-xs-4">
-                <input class="form-control" id="ex2" type="text" placeholder="Monto">
+                <input class="form-control" id="amount" v-model="amount" type="text" @keyup.enter="addArticle" placeholder="Monto">
               </div>
             </div>
           </li>
 
-          <li class="list-group-item clearfix" v-for="(balance, index) in balances">
-            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  {{ balance.article }} <span class="label label-primary" style="font-size:14px;">¢ {{ balance.amount }}</span></strong>
+          <li class="list-group-item clearfix" v-for="item in filterFortnightFirst">
+            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  {{ item.article }} <span class="label label-primary" style="font-size:14px;">¢ {{ item.amount }}</span></strong>
             <span class="pull-right">
               <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
             </span>
@@ -48,7 +48,7 @@
             <div class="row">
         <div class="col-md-4"><strong><span class="glyphicon glyphicon-calendar"></span>  QUINCENA 2</strong></div>
         <div class="col-md-4"><strong>TOTAL:</strong> <span class="label label-danger pull-right" style="font-size:14px;">¢500.000</span></div>
-        <div class="col-md-4"><strong>SALDO:</strong> <span class="label label-success pull-right" style="font-size:14px;">¢500.000</span></div>
+        <div class="col-md-4"><strong>SALDO:</strong> <span class="label label-success pull-right" style="font-size:14px;">¢ {{ totalBalance.second }}</span></div>
       </div>
       <hr>
       <div class="well">
@@ -65,26 +65,13 @@
             </div>
           </li>
 
-          <li class="list-group-item clearfix">
-            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  Pago Credomatic <span class="label label-primary" style="font-size:14px;">¢50.000</span></strong>
+          <li class="list-group-item clearfix" v-for="item in filterFortnightSecond">
+            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  {{ item.article }} <span class="label label-primary" style="font-size:14px;">¢ {{ item.amount }}</span></strong>
             <span class="pull-right">
               <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
             </span>
           </li>
 
-          <li class="list-group-item clearfix">
-            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  Pago telefonos <span class="label label-primary" style="font-size:14px;">¢25.000</span></strong>
-            <span class="pull-right">
-              <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
-            </span>
-          </li>
-          
-          <li class="list-group-item clearfix">
-            <strong><span class="glyphicon glyphicon-shopping-cart"></span>  Gasolina <span class="label label-primary" style="font-size:14px;">¢104.000</span></strong>
-            <span class="pull-right">
-              <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
-            </span>
-          </li>
         </ul>
       </div>
       </div>
@@ -96,37 +83,88 @@
 export default {
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      article: '',
+      amount: '',
       balances : [
         {
-          'article': 'Carls Junior',
-          'amount': 5000,
-          'date': '2017-10-05',
-          'fortnight': 1,
-          'done': false
+          article: 'Carls Junior',
+          amount: 5000,
+          date: '2017-10-05',
+          fortnight: 1,
+          done: false
         },
         {
-          'article': 'Siman Ropa',
-          'amount': 25000,
-          'date': '2017-10-05',
-          'fortnight': 1,
-          'done': false
+          article: 'Siman Ropa',
+          amount: 25000,
+          date: '2017-10-05',
+          fortnight: 1,
+          done: false
         },
         {
-          'article': 'Wallmart',
-          'amount': 104000,
-          'date': '2017-10-05',
-          'fortnight': 1,
-          'done': false
+          article: 'Wallmart',
+          amount: 104000,
+          date: '2017-10-05',
+          fortnight: 1,
+          done: false
         },
         {
-          'article': 'Universidad',
-          'amount': 175000,
-          'date': '2017-10-05',
-          'fortnight': 2,
-          'done': false
+          article: 'Universidad',
+          amount: 175000,
+          date: '2017-10-05',
+          fortnight: 2,
+          done: false
+        },
+        {
+          article: 'Telefonos',
+          amount: 40000,
+          date: '2017-10-05',
+          fortnight: 2,
+          done: false
         },
       ]
+    }
+  },
+  computed: {
+    filterFortnightFirst: function () {
+      return this.balances.filter(item => {
+         return item.fortnight == 1 
+      })
+    },
+    filterFortnightSecond: function () {
+      return this.balances.filter(item => {
+         return item.fortnight == 2 
+      })
+    },
+    totalBalance: function(){
+      let totalFirst = [];
+      let totalSecond = [];
+      var total = [];
+      this.balances.forEach(function (balance){
+        if(balance.fortnight == 1)
+          totalFirst.push(balance.amount);
+        else
+          totalSecond.push(balance.amount);
+      })
+      console.log(totalFirst);
+      total['first'] = totalFirst.reduce(function(totalFirst, num){ return totalFirst + num }, 0);
+      total['second'] = totalSecond.reduce(function(totalSecond, num){ return totalSecond + num }, 0);;
+
+      console.log(total);
+
+      return total;
+    }
+  },
+  methods: {
+    addArticle: function(){
+      this.balances.push(
+        {
+          article: this.article,
+          amount: this.amount,
+          date: '2017-10-05',
+          fortnight: 1,
+          done: false
+        }
+      )
     }
   }
 }
